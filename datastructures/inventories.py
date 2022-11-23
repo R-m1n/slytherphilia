@@ -199,6 +199,26 @@ class LinkedList():
 
         self.first = temp
 
+    def middle(self) -> List[Any]:
+        if self.size < 3:
+            return self.tolist()
+
+        n1 = self.first
+        n2 = self.first.next
+
+        counter = 2
+        while True:
+            n1 = n1.next
+
+            for i in range(counter):
+                n2 = n2.next
+
+            if n2 == None:
+                return [n1.value]
+
+            elif n2.next == None:
+                return [n1.value, n1.next.value]
+
     def __str__(self):
         return f"LinkedList({self.tolist()})"
 
@@ -214,11 +234,10 @@ ll.add_first(1)
 ll.add_first(2)
 ll.add_first(3)
 ll.add_first(4)
-ll.add_last(1)
 ll.add_last(2)
 ll.add_last(3)
 ll.add_last(4)
 ll.add_last(5)
 
-ll.reverse()
 print(ll)
+print(ll.middle())
