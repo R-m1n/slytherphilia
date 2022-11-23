@@ -229,15 +229,21 @@ class LinkedList():
         return self.size
 
 
-ll = LinkedList()
-ll.add_first(1)
-ll.add_first(2)
-ll.add_first(3)
-ll.add_first(4)
-ll.add_last(2)
-ll.add_last(3)
-ll.add_last(4)
-ll.add_last(5)
+class Stack():
+    def __init__(self, typecode: str) -> None:
+        if not (typecode in typecodes):
+            raise ValueError(f"'{typecode}' is not a valid typecode.")
 
-print(ll)
-print(ll.middle())
+        self.array = array(typecode)
+
+    def push(self, item: Any) -> None:
+        self.array.append(item)
+
+    def pop(self) -> Any:
+        return self.array.pop()
+
+    def peek(self) -> Any:
+        return self.array[-1]
+
+    def empty(self) -> bool:
+        return len(self.array) == 0
