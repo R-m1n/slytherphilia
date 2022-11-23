@@ -1,5 +1,5 @@
 from array import array, typecodes
-from typing import Any
+from typing import Any, List
 
 
 class Array():
@@ -171,19 +171,39 @@ class LinkedList():
 
         return -1
 
+    def contains(self, item: Any) -> bool:
+        return self.index(item) != -1
+
     def empty(self):
         return self.size == 0
 
-    def __repr__(self):
+    def tolist(self) -> List[Any]:
         list = []
 
+        if self.empty():
+            return list
+
         current = self.first
-        while current != self.last:
+        for i in range(self.size):
             list.append(current.value)
             current = current.next
 
-        list.append(self.last.value)
-        return f"{list}"
+        return list
+
+    def reverse(self) -> None:
+        temp = self.last
+        for i in range(self.size):
+            second_to_last = self.last.previous
+            self.last.next = second_to_last
+            self.last = second_to_last
+
+        self.first = temp
+
+    def __str__(self):
+        return f"LinkedList({self.tolist()})"
+
+    def __repr__(self):
+        return f"{self.tolist()}"
 
     def __len__(self):
         return self.size
@@ -198,5 +218,7 @@ ll.add_last(1)
 ll.add_last(2)
 ll.add_last(3)
 ll.add_last(4)
+ll.add_last(5)
 
-print(ll.get(-1))
+ll.reverse()
+print(ll)
