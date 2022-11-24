@@ -341,8 +341,9 @@ class HashChain():
         def __eq__(self, __o: object) -> bool:
             return self.key == __o.key
 
-    __table = [[] for i in range(5)]
-    __keys = set()
+    def __init__(self, chains: int = 5) -> None:
+        self.__table = [[] for i in range(chains)]
+        self.__keys = set()
 
     def put(self, key: Any, value: Any) -> None:
         index = self.__table_index(key)
@@ -400,9 +401,9 @@ class HashMap():
         def __eq__(self, __o: object) -> bool:
             return self.key == __o.key
 
-    def __init__(self) -> None:
+    def __init__(self, capacity: int = 100) -> None:
         self.PRIME = 47
-        self.__table = [self.Entry(None, None) for i in range(100)]
+        self.__table = [self.Entry(None, None) for i in range(capacity)]
         self.__keys = set()
 
     def get_table(self):
@@ -473,10 +474,150 @@ class HashMap():
         return key in self.__keys
 
 
-hm = HashMap()
-hm.put(123, 'sadasd')
-hm.put(744, 'afklajsd')
-hm.put(536, 'agsdsad')
-hm.put(902, 'afsdknjf')
+class BinaryTree():
+    class Node():
+        def __init__(self, value: int) -> None:
+            self.value = value
+            self.right = None
+            self.left = None
 
-pprint(hm)
+    def __init__(self) -> None:
+        self.root = None
+
+    def insert(self, value: int) -> None:
+        self.__check_value(value)
+
+        if self.root == None:
+            self.root = self.Node(value)
+            return
+
+        self.__insert(self.root, value)
+
+    def contains(self, value: int) -> bool:
+        self.__check_value(value)
+
+        return self.__contains(self.root, value)
+
+    def size(self) -> int:
+        return self.__size(self.root)
+
+    def isleaf(self, value: int) -> bool:
+        if self.contains(value):
+            node = self.__find(self.root, value)
+            return node.left == None and node.right == None
+
+    def height(self) -> int:
+        return self.__height(self.root)
+
+    def depth(self, value: int) -> int:
+        if self.contains(value):
+            return self.__depth(self.root, value)
+
+    def empty(self) -> bool:
+        return self.root == None
+
+    def max(self) -> int:
+        if self.empty():
+            return
+
+        current = self.root
+        while current.right != None:
+            current = current.right
+
+        return current.value
+
+    def min(self) -> int:
+        if self.empty():
+            return
+
+        current = self.root
+        while current.left != None:
+            current = current.left
+
+        return current.value
+
+    def sum(self) -> int:
+        return self.__sum(self.root)
+
+    def __insert(self, root: Node, value: int):
+        if root == None:
+            return
+
+        if root.value > value:
+            if root.left == None:
+                root.left = self.Node(value)
+
+            self.__insert(root.left, value)
+
+        elif root.value < value:
+            if root.right == None:
+                root.right = self.Node(value)
+
+            self.__insert(root.right, value)
+
+    def __contains(self, root: Node, value: int):
+        if root == None:
+            return False
+
+        if root.value == value:
+            return True
+
+        return self.__contains(root.left, value) or self.__contains(root.right, value)
+
+    def __size(self, root: Node):
+        if root == None:
+            return 0
+
+        return 1 + self.__size(root.left) + self.__size(root.right)
+
+    def __find(self, root: Node, value: int):
+        if root == None:
+            return
+
+        if root.value == value:
+            return root
+
+        if root.value > value:
+            return self.__find(root.left, value)
+
+        if root.value < value:
+            return self.__find(root.right, value)
+
+    def __height(self, root: Node):
+        if root == None:
+            return -1
+
+        return 1 + max(self.__height(root.left), self.__height(root.right))
+
+    def __depth(self, root: Node, value: int):
+        if root == None:
+            return 0
+
+        if root.value == value:
+            return 0
+
+        if root.value > value:
+            return 1 + self.__depth(root.left, value)
+
+        if root.value < value:
+            return 1 + self.__depth(root.right, value)
+
+    def __sum(self, root: Node):
+        if root == None:
+            return 0
+
+        return root.value + self.__sum(root.left) + self.__sum(root.right)
+
+    def __check_value(self, value):
+        if not isinstance(value, int):
+            raise ValueError("this Tree only accepts integer.")
+
+
+bt = BinaryTree()
+bt.insert(8)
+bt.insert(2)
+bt.insert(9)
+bt.insert(12)
+bt.insert(4)
+
+print(bt.sum())
