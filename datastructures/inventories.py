@@ -247,3 +247,61 @@ class Stack():
 
     def empty(self) -> bool:
         return len(self.array) == 0
+
+
+class Queue():
+    def __init__(self, typecode: str) -> None:
+        if not (typecode in typecodes):
+            raise ValueError(f"'{typecode}' is not a valid typecode.")
+
+        self.array = array(typecode)
+
+    def enqueue(self, item: Any) -> None:
+        self.array.append(item)
+
+    def dequeue(self) -> Any:
+        return self.array.pop(0)
+
+    def peek(self) -> Any:
+        return self.array[0]
+
+    def empty(self) -> bool:
+        return len(self.array) == 0
+
+
+class PriorityQueue():
+    def __init__(self, typecode: str) -> None:
+        if not (typecode in typecodes):
+            raise ValueError(f"'{typecode}' is not a valid typecode.")
+
+        self.array = array(typecode)
+
+    def add(self, item: Any) -> None:
+        self.array.append(item)
+        self.__bubble_up(item, len(self.array) - 1)
+
+    def remove(self) -> Any:
+        return self.array.pop(0)
+
+    def peek(self) -> Any:
+        return self.array[0]
+
+    def empty(self) -> bool:
+        return len(self.array) == 0
+
+    def __bubble_up(self, item, index):
+        if index == 0 or item <= self.array[index - 1]:
+            return
+
+        if item > self.array[index - 1]:
+            self.__swap(index, index - 1)
+
+        self.__bubble_up(item, index - 1)
+
+    def __swap(self, i, j):
+        temp = self.array[i]
+        self.array[i] = self.array[j]
+        self.array[j] = temp
+
+    def __repr__(self) -> str:
+        return f"{self.array.tolist()}"
