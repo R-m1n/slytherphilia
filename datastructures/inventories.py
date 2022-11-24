@@ -248,6 +248,15 @@ class Stack():
     def empty(self) -> bool:
         return len(self.array) == 0
 
+    def __str__(self):
+        return f"Stack({self.array.tolist()})"
+
+    def __repr__(self):
+        return f"{self.array.tolist()}"
+
+    def __len__(self):
+        return len(self.array)
+
 
 class Queue():
     def __init__(self, typecode: str) -> None:
@@ -267,6 +276,15 @@ class Queue():
 
     def empty(self) -> bool:
         return len(self.array) == 0
+
+    def __str__(self):
+        return f"Queue({self.array.tolist()})"
+
+    def __repr__(self):
+        return f"{self.array.tolist()}"
+
+    def __len__(self):
+        return len(self.array)
 
 
 class PriorityQueue():
@@ -303,5 +321,77 @@ class PriorityQueue():
         self.array[i] = self.array[j]
         self.array[j] = temp
 
+    def __str__(self):
+        return f"PriorityQueue({self.array.tolist()})"
+
     def __repr__(self) -> str:
         return f"{self.array.tolist()}"
+
+    def __len__(self):
+        return len(self.array)
+
+
+class HashChain():
+    class Entry():
+        def __init__(self, key: Any, value: Any) -> None:
+            self.key = key
+            self.value = value
+
+        def __eq__(self, __o: object) -> bool:
+            return self.key == __o.key
+
+    __table = [[] for i in range(5)]
+    __keys = set()
+
+    def put(self, key: Any, value: Any) -> None:
+        index = self.__table_index(key)
+
+        if key in self.__keys:
+            self.remove(key)
+
+        self.__table[index].append(self.Entry(key, value))
+        self.__keys.add(key)
+
+    def get(self, key: Any, default: Any = None) -> Any:
+        index = self.__table_index(key)
+        for entry in self.__table[index]:
+            if entry.key == key:
+                return entry.value
+
+        return default
+
+    def remove(self, key: Any) -> None:
+        index = self.__table_index(key)
+        self.__table[index].remove(self.Entry(key, None))
+
+    def keys(self) -> List[Any]:
+        return list(self.__keys)
+
+    def items(self) -> List[Any]:
+        items = []
+        for list in self.__table:
+            for entry in list:
+                items.append((entry.key, entry.value))
+
+        return items
+
+    def __table_index(self, key):
+        return hash(key) % len(self.__table)
+
+    def __repr__(self) -> str:
+        return f"{self.items()}"
+
+    def __str__(self) -> str:
+        return f"HashChain({self.items()})"
+
+    def __contains__(self, key: Any) -> bool:
+        return key in self.__keys
+
+
+hc = HashChain()
+hc.put(123, 'sadasd')
+hc.put(744, 'afklajsd')
+hc.put(536, 'agsdsad')
+hc.put(902, 'afsdknjf')
+
+print(hc)
