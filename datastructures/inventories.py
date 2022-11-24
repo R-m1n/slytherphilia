@@ -1,4 +1,5 @@
 from array import array, typecodes
+from pprint import pprint
 from typing import Any, List
 
 
@@ -353,16 +354,18 @@ class HashChain():
         self.__keys.add(key)
 
     def get(self, key: Any, default: Any = None) -> Any:
+        if key not in self.__keys:
+            return default
+
         index = self.__table_index(key)
         for entry in self.__table[index]:
             if entry.key == key:
                 return entry.value
 
-        return default
-
     def remove(self, key: Any) -> None:
         index = self.__table_index(key)
         self.__table[index].remove(self.Entry(key, None))
+        self.__keys.remove(key)
 
     def keys(self) -> List[Any]:
         return list(self.__keys)
@@ -388,10 +391,92 @@ class HashChain():
         return key in self.__keys
 
 
-hc = HashChain()
-hc.put(123, 'sadasd')
-hc.put(744, 'afklajsd')
-hc.put(536, 'agsdsad')
-hc.put(902, 'afsdknjf')
+class HashMap():
+    class Entry():
+        def __init__(self, key: Any, value: Any) -> None:
+            self.key = key
+            self.value = value
 
-print(hc)
+        def __eq__(self, __o: object) -> bool:
+            return self.key == __o.key
+
+    def __init__(self) -> None:
+        self.PRIME = 47
+        self.__table = [self.Entry(None, None) for i in range(100)]
+        self.__keys = set()
+
+    def get_table(self):
+        return self.__table
+
+    def put(self, key: Any, value: Any) -> None:
+        if key in self.__keys:
+            self.__probe(key).value = value
+
+        else:
+            index = self.__double_hash(key)
+            self.__table[index] = self.Entry(key, value)
+            self.__keys.add(key)
+
+    def get(self, key: Any, default: Any = None) -> Any:
+        if key not in self.__keys:
+            return default
+
+        return self.__probe(key).value
+
+    def remove(self, key: Any) -> None:
+        self.__table.remove(self.Entry(key, None))
+        self.__keys.remove(key)
+
+    def keys(self) -> List[Any]:
+        return list(self.__keys)
+
+    def items(self) -> List[Any]:
+        items = []
+        for key in self.__keys:
+            entry = self.__probe(key)
+            items.append((entry.key, entry.value))
+
+        return items
+
+    def __double_hash(self, key):
+        hash2 = self.PRIME - (hash(key) % self.PRIME)
+        i = 1
+        while i < len(self.__table):
+            index = (hash(key) + (hash2 * i)) % len(self.__table)
+            if self.__table[index] == self.Entry(None, None):
+                return index
+
+            index += 1
+
+    def __probe(self, key):
+        hash2 = self.PRIME - (hash(key) % self.PRIME)
+        i = 1
+        while i < len(self.__table):
+            index = (hash(key) + (hash2 * i)) % len(self.__table)
+            if self.__table[index].key == key:
+                return self.__table[index]
+
+            index += 1
+
+    def __repr__(self) -> str:
+        items = "{ "
+        for key in self.__keys:
+            entry = self.__probe(key)
+            items += f"{entry.key}: {entry.value}, "
+
+        return f"{items[:-2]}" + " }"
+
+    def __str__(self) -> str:
+        return f"HashChain({self.items()})"
+
+    def __contains__(self, key: Any) -> bool:
+        return key in self.__keys
+
+
+hm = HashMap()
+hm.put(123, 'sadasd')
+hm.put(744, 'afklajsd')
+hm.put(536, 'agsdsad')
+hm.put(902, 'afsdknjf')
+
+pprint(hm)
